@@ -32,11 +32,11 @@ EOF
 
 Transforming XML responses (GET-only)
 -------------------------------------
-For XML services that offer a read-only (`GET`) interface, i.e. clients don't send request bodies, we can use `js_body_filter` to examine and modify the responses. The function is called for every buffer (part of the response) and so to perform full transformatin of the response we must wait until we receive the last byte, indicated with `flags.last`. At this point we can use `r.sendBuffer()` to send whatever we like to the client.
+For XML services that offer a read-only (`GET`) interface, i.e. clients don't send request bodies, we can use `[js_body_filter](http://nginx.org/en/docs/http/ngx_http_js_module.html#js_body_filter)` to examine and modify the responses. The function is called for every buffer (part of the response) and so to perform full transformatin of the response we must wait until we receive the last byte, indicated with `flags.last`. At this point we can use `r.sendBuffer()` to send whatever we like to the client.
 
 `js_body_filter` can be used inside a `proxy_pass` location and so requires minimal config changes.
 
-As the size of the response is likely to change, and the response format is different it is also important to modify the response _headers_, not just the body. We can use the `js_headers_filter` directive to call a separate function for this. The `Content-Length` response header is removed so we rely on chunked encoding instead. The `Content-Type` response header is replaced with `application/json` to match the new body.
+As the size of the response is likely to change, and the response format is different it is also important to modify the response _headers_, not just the body. We can use the `[js_header_filter]((http://nginx.org/en/docs/http/ngx_http_js_module.html#js_header_filter)` directive to call a separate function for this. The `Content-Length` response header is removed so we rely on chunked encoding instead. The `Content-Type` response header is replaced with `application/json` to match the new body.
 
 _[See the `/api/f1` configuration for an example](proxy.conf#L15)_
 
