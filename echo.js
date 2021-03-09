@@ -5,27 +5,11 @@ function echo(r) {
     if (typeof(r.requestBuffer) != "undefined") {
         body = r.requestBuffer;
     } else {
-        var req = "<request";
-        req += " client=\"" + r.variables.remote_addr + "\"";
-        req += " port=\"" + r.variables.server_port + "\"";
-        req += " host=\"" + r.variables.host + "\"";
-        req += " method=\"" + r.variables.request_method + "\"";
-        req += " uri=\"" + r.uri + "\"";
-        req += " httpVersion=\"" + r.httpVersion + "\"";
-        req += ">\n";
-        req += "  <headers>\n"
-        for (var h in r.headersIn) {
-            req += "    <" + h + ">" + r.headersIn[h] + "</" + h + ">\n";
-        }
-        req += "  </headers>\n"
-        req += "</request>"
-
-        var res = "<response ";
-        res += " status=\"" + r.variables.return_code + "\"";
-        res += " timestamp=\"" + r.variables.time_iso8601 + "\"";
-        res += "></response>";
-
-        body = req + "\n" + res + "\n";
+        var req = `<request client="${r.variables.remote_addr}" port="${r.variables.server_port}" host="${r.variables.host}" method="${r.variables.request_method}" uri="${r.uri}" httpVersion="${r.httpVersion}">
+        <headers></headers>
+        </request>`;
+        var res = `<response status="${r.variables.return_code}" timestamp="${r.variables.time_iso8601}"></response>`;
+        body = `${req}\n${res}\n`;
     }
     r.return(Number(r.variables.return_code), body);
 }
