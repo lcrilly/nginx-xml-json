@@ -1,7 +1,7 @@
 FROM node:alpine AS npm
 WORKDIR /tmp
 RUN npm install xml-js && \
-    echo "export default {xj}\nfunction xj(){}" > nginxify.js && \
+    printf "export default {xj}\nfunction xj(){}\n\n" > nginxify.js && \
     echo "global.xmljs = require('xml-js');" | npx browserify -d -o browserify.js - && \
     cat nginxify.js browserify.js > xml-js.js
 
