@@ -6,9 +6,9 @@ function echo(r) {
         body = r.requestBuffer;
     } else {
         var req = `<request client="${r.variables.remote_addr}" port="${r.variables.server_port}" host="${r.variables.host}" method="${r.variables.request_method}" uri="${r.uri}" httpVersion="${r.httpVersion}">
-          <headers>
-        ${r.headersIn.forEach(() => { return `    <${h}>${r.headersIn[h]}</${h}>\n`; })}
-          </headers>
+        <headers>
+        ${Object.keys(r.headersIn).map(key => { return `<${key}>${r.headersIn[key]}</${key}>\n` }).join("")}
+        </headers>
         </request>`;
         var res = `<response status="${r.variables.return_code}" timestamp="${r.variables.time_iso8601}"></response>`;
         body = `${req}\n${res}\n`;
