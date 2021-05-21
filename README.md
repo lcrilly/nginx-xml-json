@@ -10,14 +10,14 @@ Using npm
 ---------
 This PoC uses the [`xml-js` Node.js module](https://www.npmjs.com/package/xml-js) as a library to perform transformation between XML and JSON formats. The NGINX JavaScript module can use npm modules, provided that njs supports the ECMAScript objects and primitives that were used.
 
-In this case we can use `xml-js` as-is, and keep that code in a separate file for ease of maintenance. The [Dockerfile](Dockerfile#L3) includes the necessary steps to produce the module in a way that can be consumed from other njs functions. To do this manually, follow these steps:
+In this case we can use `xml-js` as-is, and keep that code in a separate file for ease of maintenance. The [Dockerfile](Dockerfile#L3) includes the necessary steps to produce the module in a way that can be consumed by other njs functions. To do this manually, follow these steps:
 
 0. Install [Node.js](https://nodejs.org/en/)
 1. Obtain the `xml-js` module
 ```shell
    $ npm install xml-js
 ```
-2. Create a single JavaScript file the module with one extra line of code that makes the module available in the `global` namespace. Instead of using `require('xml-js')` we can now use `global.xmljs`
+2. Create a single JavaScript file with one extra line of code that makes the module available in the `global` namespace. Instead of using `require('xml-js')` we can now use `global.xmljs`
 ```shell
    $ echo "global.xmljs = require('xml-js');" | npx browserify -d -o xml-js.js -
 ```
@@ -32,7 +32,7 @@ EOF
 
 Transforming XML responses (GET-only)
 -------------------------------------
-For XML services that offer a read-only (`GET`) interface, i.e. clients don't send request bodies, we can use [`js_body_filter`](http://nginx.org/en/docs/http/ngx_http_js_module.html#js_body_filter) to examine and modify the responses. The function is called for every buffer (part of the response) and so to perform full transformatin of the response we must wait until we receive the last byte, indicated with `flags.last`. At this point we can use `r.sendBuffer()` to send whatever we like to the client.
+For XML services that offer a read-only (`GET`) interface, i.e. clients don't send request bodies, we can use [`js_body_filter`](http://nginx.org/en/docs/http/ngx_http_js_module.html#js_body_filter) to examine and modify the responses. The function is called for every buffer (part of the response) and so to perform full transformation of the response we must wait until we receive the last byte, indicated with `flags.last`. At this point we can use `r.sendBuffer()` to send whatever we like to the client.
 
 `js_body_filter` can be used inside a `proxy_pass` location and so requires minimal config changes.
 
